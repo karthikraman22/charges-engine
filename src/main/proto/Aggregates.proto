@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+package charges;
+
+option java_package = "in.achuala.core.charges.model";
+option java_multiple_files = true;
+
+message AggrCount {
+  string code = 1;
+  string period = 2;
+  int32 value = 3;
+}
+
+message AggrSum {
+  string code = 1;
+  string period = 2;
+  float value = 3;
+}
+
+
+
+message AccountAggregate {
+  string accountNumber = 1;
+  map<string, AggrCount> totalTransactions = 2;
+  map<string, AggrSum> totalValue = 3;
+}
+
+message ProductAggregate {
+  string productCode = 1;
+  map<string, AggrCount> totalTransactions = 2;
+  map<string, AggrSum> totalValue = 3;
+}
+
+message CustomerAggregate {
+  string customerId = 1;
+  map<string, AggrCount> totalTransactions = 2;
+  map<string, AggrSum> totalValue = 3;
+}

@@ -1,0 +1,99 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath 'com.google.protobuf:protobuf-gradle-plugin:0.8.16'
+    }
+}
+
+
+plugins {
+    id "java"
+    id "application"
+    id "idea"
+    id "eclipse"
+    id "com.google.protobuf" version "0.8.16"
+
+}
+group 'in.achuala.core'
+version '1.0-SNAPSHOT'
+sourceCompatibility = '11'
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+
+application {
+    mainClass = 'in.achuala.core.charges.Main'
+}
+
+dependencies {
+// Adjust the list as you need.
+    ['armeria',
+     'armeria-logback',
+     'armeria-retrofit2'].each {
+        implementation "com.linecorp.armeria:${it}:1.9.0"
+    }
+
+    compileOnly 'org.projectlombok:lombok:1.18.20'
+
+    compile 'com.google.dagger:dagger:2.37'
+    annotationProcessor 'com.google.dagger:dagger-compiler:2.37'
+
+    implementation 'redis.clients:jedis:3.6.1'
+    implementation 'org.jdbi:jdbi3-core:3.20.1'
+    implementation 'org.jdbi:jdbi3-postgres:3.20.1'
+    implementation 'com.google.protobuf:protobuf-javalite:3.17.3'
+    implementation 'com.google.protobuf:protobuf-java-util:3.17.3'
+    compileOnly 'com.google.protobuf:protobuf-gradle-plugin:0.8.16'
+
+    // Logging
+    runtimeOnly 'ch.qos.logback:logback-classic:1.2.3'
+    runtimeOnly 'org.slf4j:log4j-over-slf4j:1.7.31'
+
+
+    annotationProcessor 'org.projectlombok:lombok:1.18.20'
+
+
+    testCompileOnly 'org.projectlombok:lombok:1.18.20'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.20'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+}
+
+tasks.withType(JavaCompile) {
+    options.compilerArgs += '-parameters'
+}
+
+protobuf {
+    // Configure the protoc executable
+    protoc {
+        // Download from repositories
+        artifact = 'com.google.protobuf:protoc:3.17.3'
+    }
+    generateProtoTasks {
+        all().each { task ->
+            task.builtins {
+                java {
+                    option "lite"
+                }
+            }
+        }
+    }
+    generatedFilesBaseDir = "$projectDir/src/generated"
+}
+
+
+clean {
+    delete protobuf.generatedFilesBaseDir
+}
+
+test {
+    useJUnitPlatform()
+}
+
